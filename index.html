@@ -8,7 +8,7 @@
     <link rel="icon" href="./img/favicon.png" type="image/png">
     <link rel="stylesheet" href="css/main.css">
     <title>Ho-ho-hold That Stretch!</title>
-    
+
 </head>
 
 <body>
@@ -21,8 +21,9 @@
         <p class="mainText">
             When everything gets festive and busy, your body<br>deserves softness and attention<br><br>
 
-            Inside this calendar you’ll find small daily pleasures:<br><span class="red-text">short flows, gentle mobility, self-care rituals,
-            and<br>simple practices</span> that help you end the year feeling<br>lighter, stronger, and proud of
+            Inside this calendar you’ll find small daily pleasures:<br><span class="red-text">short flows, gentle
+                mobility, self-care rituals,
+                and<br>simple practices</span> that help you end the year feeling<br>lighter, stronger, and proud of
             yourself<br><br>
 
             <span style="font-weight: 600;">A gift from you, to you 💛</span>
@@ -103,44 +104,166 @@
 
         if (!popup) return;
 
-        // ===== OPEN POPUP =====
-        function openPopup(dayNumber) {
-            popupDaySpan.textContent = dayNumber; // 👉 ВСТАВЛЯЄМО ЧИСЛО ДНЯ
 
+        // ============================================================
+        //                    PROGRESS / LIMIT LOGIC
+        // ============================================================
+
+        let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
+        let limitTimestamp = localStorage.getItem("limitTimestamp");
+
+        // Set opacity depending on opened or not
+        items.forEach(item => {
+            const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
+            if (openedDays.includes(day)) {
+                item.style.opacity = "1"; // opened
+            } else {
+                item.style.opacity = "0.5"; // not opened
+            }
+        });
+
+        // Reset progress after 24h
+        function checkReset() {
+            if (!limitTimestamp) return;
+
+            const now = Date.now();
+            if (now - limitTimestamp >= 24 * 60 * 60 * 1000) {
+                openedDays = [];
+                localStorage.setItem("openedDays", JSON.stringify([]));
+                localStorage.removeItem("limitTimestamp");
+            }
+        }
+        checkReset();
+
+
+
+        // ============================================================
+        //                INTRO ANIMATION BEFORE FIRST CLICK
+        // ============================================================
+
+        let animationStopped = false;
+
+        function runButtonIntroAnimation() {
+            const buttons = Array.from(items);
+            let index = 0;
+
+            function animateNext() {
+                if (animationStopped) return;
+
+                const btn = buttons[index];
+                btn.style.transition = "transform 0.25s ease";
+                btn.style.transform = "scale(1.02)";
+
+                // Scale back after 250ms
+                setTimeout(() => {
+                    btn.style.transform = "scale(1)";
+
+                    setTimeout(() => {
+                        // Move to next button
+                        index++;
+
+                        // Loop back to start
+                        if (index >= buttons.length) index = 0;
+
+                        // Continue infinite loop
+                        animateNext();
+
+                    }, 120);
+
+                }, 250);
+            }
+
+            animateNext();
+        }
+
+        // запускаємо анімацію
+        runButtonIntroAnimation();
+
+        // зупиняємо анімацію при ПЕРШОМУ кліку на будь-яку кнопку
+        items.forEach(btn => {
+            btn.addEventListener("click", () => {
+                animationStopped = true;
+            }, { once: true });
+        });
+
+
+
+
+        // ============================================================
+        //                           POPUP
+        // ============================================================
+
+        function openPopup(dayNumber) {
+            popupDaySpan.textContent = dayNumber;
             popup.classList.add("active");
             document.body.style.overflow = "hidden";
         }
 
-        // ===== CLOSE POPUP =====
         function closePopup() {
             popup.classList.remove("active");
             document.body.style.overflow = "";
         }
 
-        // ===== CLICK ON CALENDAR ITEM =====
+
+        // ============================================================
+        //                           CLICK LOGIC
+        // ============================================================
+
         items.forEach(item => {
             item.addEventListener("click", () => {
-                let day = item.textContent.trim();       // Читаємо число дня
-                day = day.replace(/\D/g, "");            // Прибираємо можливі зайві символи
-                day = parseInt(day, 10);                 // Перетворюємо на число → прибирається ведучий нуль
+
+                const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
+
+                // if not opened yet
+                if (!openedDays.includes(day)) {
+
+                    // starting a 24-hour period
+                    if (openedDays.length === 0) {
+                        limitTimestamp = Date.now();
+                        localStorage.setItem("limitTimestamp", limitTimestamp);
+                    }
+
+                    // already opened 2 items this period?
+                    if (openedDays.length >= 2) {
+                        alert("You can open only 2 items per 24 hours!");
+                        return;
+                    }
+
+                    // open new day
+                    openedDays.push(day);
+                    localStorage.setItem("openedDays", JSON.stringify(openedDays));
+
+                    // make button fully visible
+                    item.style.opacity = "1";
+                }
+
+                // open popup regardless
                 openPopup(day);
             });
         });
 
-        // ===== Close by X =====
+
+
+        // ============================================================
+        //                           CLOSE POPUP
+        // ============================================================
+
         btnClose?.addEventListener("click", closePopup);
 
-        // ===== Close by click outside =====
         popup.addEventListener("click", (e) => {
             if (!popupContent.contains(e.target)) closePopup();
         });
 
-        // ===== Close by ESC =====
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape") closePopup();
         });
 
-        // ===== Download PDF =====
+
+
+        // ============================================================
+        //                        DOWNLOAD PDF
+        // ============================================================
+
         btnDownload?.addEventListener("click", () => {
             const link = document.createElement("a");
             link.href = "./tracker.pdf";
@@ -151,7 +274,9 @@
         });
 
     });
+
 </script>
+
 
 
 </html>
