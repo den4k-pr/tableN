@@ -93,185 +93,179 @@
 
 </body>
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
+   document.addEventListener("DOMContentLoaded", () => {
 
-        const popup = document.querySelector(".popup");
-        const popupContent = document.querySelector(".popup__content");
-        const btnClose = document.querySelector(".popup .close");
-        const btnDownload = document.querySelector(".popup .download");
-        const popupDaySpan = document.querySelector(".popup__content-title span");
-        const items = document.querySelectorAll(".calendar-grid .item");
+    const popup = document.querySelector(".popup");
+    const popupContent = document.querySelector(".popup__content");
+    const btnClose = document.querySelector(".popup .close");
+    const btnDownload = document.querySelector(".popup .download");
+    const popupDaySpan = document.querySelector(".popup__content-title span");
+    const items = document.querySelectorAll(".calendar-grid .item");
 
-        if (!popup) return;
+    if (!popup) return;
 
+    // ============================================================
+    //                    STORAGE DATA
+    // ============================================================
 
-        // ============================================================
-        //                    PROGRESS / LIMIT LOGIC
-        // ============================================================
+    let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
+    let dailyOpened = JSON.parse(localStorage.getItem("dailyOpened")) || [];
+    let limitTimestamp = localStorage.getItem("limitTimestamp");
 
-        let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
-        let limitTimestamp = localStorage.getItem("limitTimestamp");
+    // ============================================================
+    //                 DAILY RESET LOGIC
+    // ============================================================
 
-        // Set opacity depending on opened or not
-        items.forEach(item => {
-            const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
-            if (openedDays.includes(day)) {
-                item.style.opacity = "1"; // opened
-            } else {
-                item.style.opacity = "0.5"; // not opened
-            }
-        });
+    function checkDailyReset() {
+        if (!limitTimestamp) return;
 
-        // Reset progress after 24h
-        function checkReset() {
-            if (!limitTimestamp) return;
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
 
-            const now = Date.now();
-            if (now - limitTimestamp >= 24 * 60 * 60 * 1000) {
-                openedDays = [];
-                localStorage.setItem("openedDays", JSON.stringify([]));
-                localStorage.removeItem("limitTimestamp");
-            }
+        if (now - limitTimestamp >= oneDay) {
+            dailyOpened = [];
+            localStorage.setItem("dailyOpened", JSON.stringify([]));
+            limitTimestamp = Date.now();
+            localStorage.setItem("limitTimestamp", limitTimestamp);
         }
-        checkReset();
+    }
+    checkDailyReset();
 
+    // ============================================================
+    //             APPLY VISUAL STATE BASED ON OPENED DAYS
+    // ============================================================
 
+    items.forEach(item => {
+        const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
+        if (openedDays.includes(day)) {
+            item.style.opacity = "1";
+        } else {
+            item.style.opacity = "0.5";
+        }
+    });
 
-        // ============================================================
-        //                INTRO ANIMATION BEFORE FIRST CLICK
-        // ============================================================
+    // ============================================================
+    //                     INTRO ANIMATION
+    // ============================================================
 
-        let animationStopped = false;
+    let animationStopped = false;
 
-        function runButtonIntroAnimation() {
-            const buttons = Array.from(items);
-            let index = 0;
+    function runButtonIntroAnimation() {
+        const buttons = Array.from(items);
+        let index = 0;
 
-            function animateNext() {
-                if (animationStopped) return;
+        function animateNext() {
+            if (animationStopped) return;
 
-                const btn = buttons[index];
-                btn.style.transition = "transform 0.25s ease";
-                btn.style.transform = "scale(1.02)";
+            const btn = buttons[index];
+            btn.style.transition = "transform 0.25s ease";
+            btn.style.transform = "scale(1.02)";
 
-                // Scale back after 250ms
+            setTimeout(() => {
+                btn.style.transform = "scale(1)";
+
                 setTimeout(() => {
-                    btn.style.transform = "scale(1)";
+                    index++;
+                    if (index >= buttons.length) index = 0;
+                    animateNext();
+                }, 120);
 
-                    setTimeout(() => {
-                        // Move to next button
-                        index++;
-
-                        // Loop back to start
-                        if (index >= buttons.length) index = 0;
-
-                        // Continue infinite loop
-                        animateNext();
-
-                    }, 120);
-
-                }, 250);
-            }
-
-            animateNext();
+            }, 250);
         }
 
-        // запускаємо анімацію
-        runButtonIntroAnimation();
+        animateNext();
+    }
 
-        // зупиняємо анімацію при ПЕРШОМУ кліку на будь-яку кнопку
-        items.forEach(btn => {
-            btn.addEventListener("click", () => {
-                animationStopped = true;
-            }, { once: true });
-        });
+    runButtonIntroAnimation();
 
-
-
-
-        // ============================================================
-        //                           POPUP
-        // ============================================================
-
-        function openPopup(dayNumber) {
-            popupDaySpan.textContent = dayNumber;
-            popup.classList.add("active");
-        }
-
-        function closePopup() {
-            popup.classList.remove("active");
-        }
+    items.forEach(btn => {
+        btn.addEventListener("click", () => {
+            animationStopped = true;
+        }, { once: true });
+    });
 
 
-        // ============================================================
-        //                           CLICK LOGIC
-        // ============================================================
+    // ============================================================
+    //                           POPUP
+    // ============================================================
 
-        items.forEach(item => {
-            item.addEventListener("click", () => {
+    function openPopup(dayNumber) {
+        popupDaySpan.textContent = dayNumber;
+        popup.classList.add("active");
+    }
 
-                const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
+    function closePopup() {
+        popup.classList.remove("active");
+    }
 
-                // if not opened yet
-                if (!openedDays.includes(day)) {
+    // ============================================================
+    //                         CLICK LOGIC
+    // ============================================================
 
-                    // starting a 24-hour period
-                    if (openedDays.length === 0) {
-                        limitTimestamp = Date.now();
-                        localStorage.setItem("limitTimestamp", limitTimestamp);
-                    }
+    items.forEach(item => {
+        item.addEventListener("click", () => {
 
-                    // already opened 2 items this period?
-                    if (openedDays.length >= 2) {
-                        alert("You can open only 2 items per 24 hours!");
-                        return;
-                    }
+            const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
 
-                    // open new day
-                    openedDays.push(day);
-                    localStorage.setItem("openedDays", JSON.stringify(openedDays));
+            const alreadyOpened = openedDays.includes(day);
 
-                    // make button fully visible
-                    item.style.opacity = "1";
+            if (!alreadyOpened) {
+
+                // Start new day window
+                if (dailyOpened.length === 0) {
+                    limitTimestamp = Date.now();
+                    localStorage.setItem("limitTimestamp", limitTimestamp);
                 }
 
-                // open popup regardless
-                openPopup(day);
-            });
+                // Check daily limit
+                if (dailyOpened.length >= 2) {
+                    alert("You can open only 2 items per 24 hours!");
+                    return;
+                }
+
+                // Mark this as opened forever
+                openedDays.push(day);
+                localStorage.setItem("openedDays", JSON.stringify(openedDays));
+
+                // Mark this as opened for today
+                dailyOpened.push(day);
+                localStorage.setItem("dailyOpened", JSON.stringify(dailyOpened));
+
+                item.style.opacity = "1";
+            }
+
+            openPopup(day);
         });
-
-
-
-        // ============================================================
-        //                           CLOSE POPUP
-        // ============================================================
-
-        btnClose?.addEventListener("click", closePopup);
-
-        popup.addEventListener("click", (e) => {
-            if (!popupContent.contains(e.target)) closePopup();
-        });
-
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape") closePopup();
-        });
-
-
-
-        // ============================================================
-        //                        DOWNLOAD PDF
-        // ============================================================
-
-        btnDownload?.addEventListener("click", () => {
-            const link = document.createElement("a");
-            link.href = "./tracker.pdf";
-            link.download = "tracker.pdf";
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-        });
-
     });
+
+    // ============================================================
+    //                      POPUP CLOSE LOGIC
+    // ============================================================
+
+    btnClose?.addEventListener("click", closePopup);
+
+    popup.addEventListener("click", (e) => {
+        if (!popupContent.contains(e.target)) closePopup();
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closePopup();
+    });
+
+    // ============================================================
+    //                        DOWNLOAD PDF
+    // ============================================================
+
+    btnDownload?.addEventListener("click", () => {
+        const link = document.createElement("a");
+        link.href = "./tracker.pdf";
+        link.download = "tracker.pdf";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    });
+
+});
 
 </script>
 
