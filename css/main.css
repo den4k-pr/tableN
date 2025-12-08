@@ -27,14 +27,14 @@
     padding: 15px;
 }
 
-.plants{
+.plants {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
 }
 
-.title{
+.title {
     font-weight: 500;
     font-size: 48px;
     line-height: 98%;
@@ -44,11 +44,11 @@
     color: #000;
 }
 
-.logo{
+.logo {
     margin: 0 auto;
 }
 
-.mainText{
+.mainText {
     font-weight: 400;
     font-size: 16px;
     line-height: 144%;
@@ -57,10 +57,11 @@
     color: #000;
 }
 
-.red-text{
+.red-text {
     font-weight: 600;
     color: #f00;
 }
+
 /* ==============================
             ЕЛЕМЕНТИ
 ============================== */
@@ -104,7 +105,7 @@
     aspect-ratio: 1 / 2.09;
 }
 
-.download{
+.download {
     font-weight: 400;
     font-size: 20px;
     line-height: 112%;
@@ -122,20 +123,21 @@
     transition: .2s
 }
 
-.download:hover{
+.download:hover {
     background: linear-gradient(166deg, #d50909 0%, rgb(243, 11, 11) 100%);
 }
-.download:active{
+
+.download:active {
     transform: scale(1.02);
 }
 
-.img-file{
+.img-file {
     width: 25px;
     height: 30px;
     object-fit: contain;
 }
 
-.popup{
+.popup {
     background-color: #00000051;
     position: fixed;
     top: 0;
@@ -154,7 +156,7 @@
     transition: all .3s;
 }
 
-.popup__content{
+.popup__content {
     transform: scale(0.8);
     width: 380px;
     height: 453px;
@@ -173,16 +175,73 @@
     transition: all .3s;
 }
 
+.day-2 .popup__content {
+    background-image: url(../img/popup_fon-2.png);
+}
+.day-3 .popup__content {
+    background-image: url(../img/popup_fon-3.png);
+}
+
+.day-2 .popup__content {
+    transform: scale(0.8);
+    width: 380px;
+    height: 453px;
+    padding: 20px 50px 20px 29px;
+    justify-content: flex-end;
+    gap: 21px;
+}
+
+.day-3 .popup__content{
+     justify-content: flex-end;
+     align-items: center;
+     text-align: center;
+}
+
+.day-2 .download {
+    margin: 0 auto 20px 0;
+    box-shadow: inset 0 0 12px 0 #fd0;
+    background: linear-gradient(172deg, #cf070b 0%, #e5737e 100%);
+    border: 1px solid #faa;
+    border-radius: 14px;
+    font-weight: 400;
+    font-size: 28px;
+    letter-spacing: -1px;
+    line-height: 133%;
+    text-transform: uppercase;
+    text-align: center;
+}
+.day-3 .download{
+    background: linear-gradient(308deg, rgba(255, 31, 31, 0.2) 0%, rgba(246, 18, 18, 0.2) 100%);
+    border-radius: 27px;
+    font-weight: 700;
+    font-size: 20px;
+    margin: 0px auto 20px auto;
+    box-shadow: none;
+    border: 1px solid #f681814a;
+}
+
+.day-2 .popup__content-text{
+    width: 200px;
+}
+.day-3 .popup__content-text{
+    background: initial;
+    text-align: center;
+    width: 100%;
+    display: inline;
+    height: auto;
+    backdrop-filter: none
+}
+
 .popup.active {
     opacity: 1;
     visibility: visible;
 }
 
-.popup.active .popup__content{
+.popup.active .popup__content {
     transform: scale(1);
 }
 
-.close{
+.close {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -190,7 +249,7 @@
     cursor: pointer;
 }
 
-.popup__content-title{
+.popup__content-title {
     font-weight: 800;
     font-size: 32px;
     line-height: 100%;
@@ -200,7 +259,7 @@
     color: #fff;
 }
 
-.popup__content-text{
+.popup__content-text {
     font-weight: 500;
     font-size: 14px;
     line-height: 121%;

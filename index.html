@@ -34,19 +34,12 @@
     <div class="popup">
         <div class="popup__content">
             <button class="close"><img src="./img/close.svg" alt="close"></button>
-            <h2 class="popup__content-title">
-                Lets<br>start<br>with <br>day <span>1</span>!</h2>
-
-            <p class="popup__content-text">
-                Before we jump into the fun, let’s set the foundation✨<br> Use it daily to keep your routines simple,
-                joyful, and stress-free
-            </p>
-            <button class="download">
-                Download a Tracker
-                <img src="./img/file.png" class="img-file" alt="file">
-            </button>
+            <h2 class="popup__content-title"></h2>
+            <p class="popup__content-text"></p>
+            <a href="#" class="download"></a>
         </div>
     </div>
+
     <div class="calendar-grid">
         <div class="item g m">01</div>
         <div class="item r w-2">02</div>
@@ -93,180 +86,163 @@
 
 </body>
 <script>
-   document.addEventListener("DOMContentLoaded", () => {
+    const popupData = [
+        {
+            day: 1,
+            bg: "./img/popup_fon-1.png",
+            title: "Hey hey! That’s the first day!",
+            text: "Your first full body + glutes training is here.",
+            link: "https://example.com/day1",
+            linkText: "Start now"
+        },
+        {
+            day: 2,
+            bg: "./img/popup_fon-2.png",
+            title: "Day 2 is here!",
+            text: "Today is about mobility and stretching.",
+            link: "https://example.com/day2",
+            linkText: "Start The Flow"
+        },
 
-    const popup = document.querySelector(".popup");
-    const popupContent = document.querySelector(".popup__content");
-    const btnClose = document.querySelector(".popup .close");
-    const btnDownload = document.querySelector(".popup .download");
-    const popupDaySpan = document.querySelector(".popup__content-title span");
-    const items = document.querySelectorAll(".calendar-grid .item");
+        {
+            day: 3,
+            bg: "./img/popup_fon-2.png",
+            title: "Day 2 is here!",
+            text: "Today is about mobility and stretching.",
+            link: "https://example.com/day2",
+            linkText: "Start The Flow"
+        },
+    ];
 
-    if (!popup) return;
+    document.addEventListener("DOMContentLoaded", () => {
 
-    // ============================================================
-    //                    STORAGE DATA
-    // ============================================================
+        const popup = document.querySelector(".popup");
+        const popupContent = popup.querySelector(".popup__content");
+        const popupTitle = popup.querySelector(".popup__content-title");
+        const popupText = popup.querySelector(".popup__content-text");
+        const popupLink = popup.querySelector(".download");
 
-    let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
-    let dailyOpened = JSON.parse(localStorage.getItem("dailyOpened")) || [];
-    let limitTimestamp = localStorage.getItem("limitTimestamp");
+        const items = document.querySelectorAll(".calendar-grid .item");
 
-    // ============================================================
-    //                 DAILY RESET LOGIC
-    // ============================================================
+        // === Дані для popup (title, текст, фон, посилання) ===
+        const popupData = [
+            { day: 1, bg: "./img/popup_fon-1.png", title: "Lets<br>start<br>with <br>day 1!", text: " Before we jump into the fun, let’s set the foundation✨<br> Use it daily to keep your routines simple, joyful, and stress-free", link: "#", linkText: "Download a Tracker" },
+            { day: 2, bg: "./img/popup_fon-2.png", title: "Hey hey!<br>That’s the<br>second day!", text: "Your first full body + glutes<br>training is here. <br>Let's move and set<br>strength foundation!", link: "https://zubalenok.kwiga.com/o/5xVhS9IbkWIw", linkText: "Start now" },
+            { day: 3, bg: "./img/popup_fon-3.png", title: "Day 3 is here!", text: "YOU'RE BACK! 💪 <br>That's consistency. Let's get into<br>Mobility Flow Today!", link: "https://zubalenok.kwiga.com/o/dfL34Zzrc4Wc", linkText: "Start The Flow!" },
+            // ... додай всі дні до 30
+        ];
 
-    function checkDailyReset() {
-        if (!limitTimestamp) return;
+        // === Локальне сховище для відкритих днів ===
+        let openedDays = JSON.parse(localStorage.getItem("openedDays")) || [];
+        let dailyOpened = JSON.parse(localStorage.getItem("dailyOpened")) || [];
+        let limitTimestamp = localStorage.getItem("limitTimestamp");
 
-        const now = Date.now();
-        const oneDay = 24 * 60 * 60 * 1000;
-
-        if (now - limitTimestamp >= oneDay) {
-            dailyOpened = [];
-            localStorage.setItem("dailyOpened", JSON.stringify([]));
-            limitTimestamp = Date.now();
-            localStorage.setItem("limitTimestamp", limitTimestamp);
-        }
-    }
-    checkDailyReset();
-
-    // ============================================================
-    //             APPLY VISUAL STATE BASED ON OPENED DAYS
-    // ============================================================
-
-    items.forEach(item => {
-        const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
-        if (openedDays.includes(day)) {
-            item.style.opacity = "1";
-        } else {
-            item.style.opacity = "0.5";
-        }
-    });
-
-    // ============================================================
-    //                     INTRO ANIMATION
-    // ============================================================
-
-    let animationStopped = false;
-
-    function runButtonIntroAnimation() {
-        const buttons = Array.from(items);
-        let index = 0;
-
-        function animateNext() {
-            if (animationStopped) return;
-
-            const btn = buttons[index];
-            btn.style.transition = "transform 0.25s ease";
-            btn.style.transform = "scale(1.02)";
-
-            setTimeout(() => {
-                btn.style.transform = "scale(1)";
-
-                setTimeout(() => {
-                    index++;
-                    if (index >= buttons.length) index = 0;
-                    animateNext();
-                }, 120);
-
-            }, 250);
-        }
-
-        animateNext();
-    }
-
-    runButtonIntroAnimation();
-
-    items.forEach(btn => {
-        btn.addEventListener("click", () => {
-            animationStopped = true;
-        }, { once: true });
-    });
-
-
-    // ============================================================
-    //                           POPUP
-    // ============================================================
-
-    function openPopup(dayNumber) {
-        popupDaySpan.textContent = dayNumber;
-        popup.classList.add("active");
-    }
-
-    function closePopup() {
-        popup.classList.remove("active");
-    }
-
-    // ============================================================
-    //                         CLICK LOGIC
-    // ============================================================
-
-    items.forEach(item => {
-        item.addEventListener("click", () => {
-
-            const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
-
-            const alreadyOpened = openedDays.includes(day);
-
-            if (!alreadyOpened) {
-
-                // Start new day window
-                if (dailyOpened.length === 0) {
-                    limitTimestamp = Date.now();
-                    localStorage.setItem("limitTimestamp", limitTimestamp);
-                }
-
-                // Check daily limit
-                if (dailyOpened.length >= 2) {
-                    alert("You can open only 2 items per 24 hours!");
-                    return;
-                }
-
-                // Mark this as opened forever
-                openedDays.push(day);
-                localStorage.setItem("openedDays", JSON.stringify(openedDays));
-
-                // Mark this as opened for today
-                dailyOpened.push(day);
-                localStorage.setItem("dailyOpened", JSON.stringify(dailyOpened));
-
-                item.style.opacity = "1";
+        // === Скидання ліміту щодня ===
+        function checkDailyReset() {
+            if (!limitTimestamp) return;
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+            if (now - limitTimestamp >= oneDay) {
+                dailyOpened = [];
+                localStorage.setItem("dailyOpened", JSON.stringify([]));
+                limitTimestamp = Date.now();
+                localStorage.setItem("limitTimestamp", limitTimestamp);
             }
+        }
+        checkDailyReset();
 
-            openPopup(day);
+        // === Застосування стану до календаря ===
+        items.forEach(item => {
+            const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
+            item.style.opacity = openedDays.includes(day) ? "1" : "0.5";
         });
+
+        // === Відкриття popup ===
+        function openPopup(dayNumber) {
+            const data = popupData.find(d => d.day === dayNumber);
+            if (!data) return;
+
+            popup.className = `popup day-${data.day}`;
+            popupContent.style.backgroundImage = `url('${data.bg}')`;
+            popupTitle.innerHTML = data.title; // innerHTML дозволяє <br>
+            popupText.innerHTML = data.text;   // innerHTML дозволяє <br>
+            popupLink.href = data.link;
+            popupLink.textContent = data.linkText;
+
+            popup.classList.add("active");
+        }
+
+
+        function closePopup() {
+            popup.classList.remove("active");
+        }
+
+        // === Клік по дню календаря ===
+        items.forEach(item => {
+            item.addEventListener("click", () => {
+                const day = parseInt(item.textContent.replace(/\D/g, ""), 10);
+                const alreadyOpened = openedDays.includes(day);
+
+                if (!alreadyOpened) {
+                    if (dailyOpened.length === 0) {
+                        limitTimestamp = Date.now();
+                        localStorage.setItem("limitTimestamp", limitTimestamp);
+                    }
+
+                    if (dailyOpened.length >= 2) {
+                        alert("You can open only 2 items per 24 hours!");
+                        return;
+                    }
+
+                    openedDays.push(day);
+                    localStorage.setItem("openedDays", JSON.stringify(openedDays));
+
+                    dailyOpened.push(day);
+                    localStorage.setItem("dailyOpened", JSON.stringify(dailyOpened));
+
+                    item.style.opacity = "1";
+                }
+
+                openPopup(day);
+            });
+        });
+
+        // === Закриття popup ===
+        popup.querySelector(".close").addEventListener("click", closePopup);
+        popup.addEventListener("click", e => {
+            if (!popupContent.contains(e.target)) closePopup();
+        });
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") closePopup();
+        });
+
+        // === Додатково: невелика анімація кнопок ===
+        let animationStopped = false;
+        function runButtonIntroAnimation() {
+            const buttons = Array.from(items);
+            let index = 0;
+            function animateNext() {
+                if (animationStopped) return;
+                const btn = buttons[index];
+                btn.style.transition = "transform 0.25s ease";
+                btn.style.transform = "scale(1.02)";
+                setTimeout(() => {
+                    btn.style.transform = "scale(1)";
+                    setTimeout(() => {
+                        index++;
+                        if (index >= buttons.length) index = 0;
+                        animateNext();
+                    }, 120);
+                }, 250);
+            }
+            animateNext();
+        }
+        runButtonIntroAnimation();
+        items.forEach(btn => {
+            btn.addEventListener("click", () => animationStopped = true, { once: true });
+        });
+
     });
-
-    // ============================================================
-    //                      POPUP CLOSE LOGIC
-    // ============================================================
-
-    btnClose?.addEventListener("click", closePopup);
-
-    popup.addEventListener("click", (e) => {
-        if (!popupContent.contains(e.target)) closePopup();
-    });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closePopup();
-    });
-
-    // ============================================================
-    //                        DOWNLOAD PDF
-    // ============================================================
-
-    btnDownload?.addEventListener("click", () => {
-        const link = document.createElement("a");
-        link.href = "./tracker.pdf";
-        link.download = "tracker.pdf";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-    });
-
-});
-
 </script>
 
 
