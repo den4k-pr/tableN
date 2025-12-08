@@ -219,6 +219,9 @@
     box-shadow: none;
     border: 1px solid #f681814a;
 }
+.day-4 .download{
+    margin: 5px auto 20px 15px;
+}
 
 .day-2 .popup__content-text{
     width: 200px;
@@ -231,7 +234,63 @@
     height: auto;
     backdrop-filter: none
 }
-
+.day-4 .popup__content{
+    justify-content: left;
+    padding: 40px 25px 20px 25px;
+}
+.day-4 .popup__content-text{
+    width: 211px;
+    height: 170px;
+    margin: 0 auto 0 0;
+}
+.day-4 .popup__content-title {
+    font-size: 30px;
+    padding-bottom: 10px;
+}
+.day-5 .popup__content-text{
+    display: none;
+}
+.day-6 .popup__content-text{
+    background-image: url(../img/tf.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 20px;
+}
+.day-5 .popup__content{
+    justify-content: right;
+    padding: 20px 25px 20px 50px;
+}
+.day-6 .popup__content{
+    justify-content: left;
+    padding: 20px 25px 20px 30px;
+}
+.day-6 .download{
+    margin: 15px auto auto 25px;
+}
+.day-5 .popup__content-title{
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 100%;
+    text-transform: uppercase;
+    text-align: right !important;
+    color: #fff;
+}
+.day-5 .download{
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 160%;
+    text-align: center;
+    color: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    width: 200px;
+    height: 88px;
+    box-shadow: 0 0 26px 0 rgba(239, 41, 141, 0.6);
+    background: #f9444d;
+        margin: 10px 0 auto auto;
+}
 .popup.active {
     opacity: 1;
     visibility: visible;

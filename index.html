@@ -129,7 +129,9 @@
             { day: 1, bg: "./img/popup_fon-1.png", title: "Lets<br>start<br>with <br>day 1!", text: " Before we jump into the fun, let’s set the foundation✨<br> Use it daily to keep your routines simple, joyful, and stress-free", link: "#", linkText: "Download a Tracker" },
             { day: 2, bg: "./img/popup_fon-2.png", title: "Hey hey!<br>That’s the<br>second day!", text: "Your first full body + glutes<br>training is here. <br>Let's move and set<br>strength foundation!", link: "https://zubalenok.kwiga.com/o/5xVhS9IbkWIw", linkText: "Start now" },
             { day: 3, bg: "./img/popup_fon-3.png", title: "Day 3 is here!", text: "YOU'RE BACK! 💪 <br>That's consistency. Let's get into<br>Mobility Flow Today!", link: "https://zubalenok.kwiga.com/o/dfL34Zzrc4Wc", linkText: "Start The Flow!" },
-            // ... додай всі дні до 30
+            { day: 4, bg: "./img/popup_fon-4.png", title: "Welcome to day 4!", text: "Surprise! Today's gift isn't <br>a workout — it's<br>Your Personal Nutrition<br>Guide!<br>Smart, simple tips to feel<br>amazing through the<br>holidays.", link: "https://zubalenok.kwiga.com/o/c7d7WFdEFLxF", linkText: " Check <br>Your Lesson!" },
+            { day: 5, bg: "./img/popup_fon-5.png", title: "Advent Day 5:<br>Time for <br>Back Mobility!", text: "", link: "https://zubalenok.kwiga.com/o/c7d7WFdEFLxF", linkText: " Check it Out!" },
+            { day: 6, bg: "./img/popup_fon-6.png", title: "Keep going! <br>Day 6 <br>is open!!", text: "Let’s train smart, feel strong,<br>and stay consistent.", link: "https://zubalenok.kwiga.com/o/F1loeH2vmSbo", linkText: "Unlock Your<br>Body Strength" },
         ];
 
         // === Локальне сховище для відкритих днів ===
@@ -158,19 +160,41 @@
         });
 
         // === Відкриття popup ===
-        function openPopup(dayNumber) {
-            const data = popupData.find(d => d.day === dayNumber);
-            if (!data) return;
+       function openPopup(dayNumber) {
+    const data = popupData.find(d => d.day === dayNumber);
+    if (!data) return;
 
+    const img = new Image();
+    img.src = data.bg;
+
+    img.onload = () => {
+        // Штучна затримка перед показом
+        setTimeout(() => {
             popup.className = `popup day-${data.day}`;
             popupContent.style.backgroundImage = `url('${data.bg}')`;
-            popupTitle.innerHTML = data.title; // innerHTML дозволяє <br>
-            popupText.innerHTML = data.text;   // innerHTML дозволяє <br>
+            popupTitle.innerHTML = data.title; // дозволяє <br>
+            popupText.innerHTML = data.text;   // дозволяє <br>
             popupLink.href = data.link;
-            popupLink.textContent = data.linkText;
+            popupLink.innerHTML = data.linkText; // тепер <br> працює і тут
 
             popup.classList.add("active");
-        }
+        }, 400); // 400 мс затримка
+    };
+
+    img.onerror = () => {
+        console.error("Не вдалося завантажити зображення:", data.bg);
+        setTimeout(() => {
+            popup.className = `popup day-${data.day}`;
+            popupTitle.innerHTML = data.title;
+            popupText.innerHTML = data.text;
+            popupLink.href = data.link;
+            popupLink.innerHTML = data.linkText;
+
+            popup.classList.add("active");
+        }, 400);
+    };
+}
+
 
 
         function closePopup() {
