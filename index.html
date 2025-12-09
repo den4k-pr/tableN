@@ -109,7 +109,7 @@
 
         // === Дані для popup (title, текст, фон, посилання) ===
         const popupData = [
-            { day: 1, bg: "./img/popup_fon-1.png", title: "Lets<br>start<br>with <br>day 1!", text: " Before we jump into the fun, let’s set the foundation✨<br> Use it daily to keep your routines simple, joyful, and stress-free", link: "#", linkText: "Download a Tracker" },
+            { day: 1, bg: "./img/popup_fon-1.png", title: "Lets<br>start<br>with <br>day 1!", text: " Before we jump into the fun, let’s set the foundation✨<br> Use it daily to keep your routines simple, joyful, and stress-free", link: "./tracker.pdf", linkText: "Download a Tracker", download: true  },
             { day: 2, bg: "./img/popup_fon-2.png", title: "Hey hey!<br>That’s the<br>second day!", text: "Your first full body + glutes<br>training is here. <br>Let's move and set<br>strength foundation!", link: "https://zubalenok.kwiga.com/o/5xVhS9IbkWIw", linkText: "Start now" },
             { day: 3, bg: "./img/popup_fon-3.png", title: "Day 3 is here!", text: "YOU'RE BACK! 💪 <br>That's consistency. Let's get into<br>Mobility Flow Today!", link: "https://zubalenok.kwiga.com/o/dfL34Zzrc4Wc", linkText: "Start The Flow!" },
             { day: 4, bg: "./img/popup_fon-4.png", title: "Welcome to day 4!", text: "Surprise! Today's gift isn't <br>a workout — it's<br>Your Personal Nutrition<br>Guide!<br>Smart, simple tips to feel<br>amazing through the<br>holidays.", link: "https://zubalenok.kwiga.com/o/c7d7WFdEFLxF", linkText: " Check <br>Your Lesson!" },
@@ -160,6 +160,11 @@
             popupLink.href = data.link;
             popupLink.innerHTML = data.linkText; // тепер <br> працює і тут
 
+            if (data.download) {
+                popupLink.setAttribute("download", "");
+            } else {
+                popupLink.removeAttribute("download");
+            }
             popup.classList.add("active");
         }, 400); // 400 мс затримка
     };
